@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ငွေဝင်ငွေထွက်စာရင်း</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Myanmar Text', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 100%;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: none;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4a6491, #2c3e50);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .main-content {
+            padding: 15px;
+        }
+        
+        .total-balance-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .total-balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #4a6491, #2c3e50);
+        }
+        
+        .balance-section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .balance-section-title i {
+            margin-right: 10px;
+            color: #4a6491;
+        }
+        
+        .balance-display {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+        }
+        
+        .balance-label {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .balance-amount {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .daily-limit-section {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .limit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .limit-title {
+            font-size: 1.1rem;
+            color: #444;
+            font-weight: 600;
+        }
+        
+        .limit-amount {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .limit-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 0.95rem;
+        }
+        
+        .limit-progress {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .limit-progress-bar {
+            height: 100%;
+            background-color: #27ae60;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .limit-warning {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 8px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+        }
+        
+        .limit-warning.show {
+            opacity: 1;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { background-color: rgba(231, 76, 60, 0.1); }
+            50% { background-color: rgba(231, 76, 60, 0.2); }
+            100% { background-color: rgba(231, 76, 60, 0.1); }
+        }
+        
+        .limit-warning i {
+            margin-right: 8px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .edit-balance-btn {
+            background: linear-gradient(to right, #4a6491, #3a5479);
+            color: white;
+        }
+        
+        .add-expense-btn {
+            background: linear-gradient(to right, #27ae60, #219653);
+            color: white;
+        }
+        
+        .summary-cards {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .summary-card {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .summary-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .summary-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* Expenses Section */
+        .expenses-section {
+            margin-top: 20px;
+        }
+        
+        .expenses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: #4a6491;
+        }
+        
+        .expenses-count {
+            background-color: #4a6491;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .add-expense-form {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #f9f9f9;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a6491;
+            background-color: white;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .submit-expense-btn {
+            background: linear-gradient(to right, #27ae60, #219653);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        
+        .submit-expense-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .expenses-list {
+            margin-top: 20px;
+        }
+        
+        .expense-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #e74c3c;
+            position: relative;
+        }
+        
+        .expense-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .expense-description {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            flex: 2;
+        }
+        
+        .expense-amount {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #e74c3c;
+            text-align: right;
+        }
+        
+        .expense-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .expense-date, .expense-time, .expense-category {
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .expense-date i, .expense-time i, .expense-category i {
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .delete-expense-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-title i {
+            margin-right: 10px;
+            color: #4a6491;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .modal-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .cancel-btn {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .save-btn {
+            background: linear-gradient(to right, #27ae60, #219653);
+            color: white;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-item.active {
+            color: #4a6491;
+        }
+        
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding-bottom: 70px; /* Bottom nav height */
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 15px;
+            color: #666;
+            font-size: 0.85rem;
+            background-color: #f8f9fa;
+            margin-top: 20px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .summary-cards {
+                flex-direction: column;
+            }
+        }
+        
+        /* Swipe to delete effect */
+        .expense-item {
+            transition: transform 0.3s ease;
+        }
+        
+        .swipe-delete {
+            transform: translateX(-100px);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-wallet"></i> ငွေဝင်ငွေထွက်</h1>
+            <p class="subtitle">နေ့စဉ်အသုံးစရိတ် ကန့်သတ်ချက်နှင့်</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="total-balance-card">
+                    <h2 class="balance-section-title"><i class="fas fa-chart-line"></i> စုစုပေါင်းငွေ</h2>
+                    
+                    <div class="balance-display">
+                        <div class="balance-label">လက်ကျန်ငွေ</div>
+                        <div class="balance-amount" id="totalBalance">၀ ကျပ်</div>
+                    </div>
+                    
+                    <div class="daily-limit-section">
+                        <div class="limit-header">
+                            <div class="limit-title"><i class="fas fa-calendar-day"></i> နေ့စဉ်ကန့်သတ်ချက်</div>
+                            <div class="limit-amount" id="dailyLimitAmount">၇၀၀၀ ကျပ်</div>
+                        </div>
+                        
+                        <div class="limit-info">
+                            <span>သုံးပြီး: <span id="dailyUsed">၀ ကျပ်</span></span>
+                            <span>ကျန်: <span id="dailyRemaining">၇၀၀၀ ကျပ်</span></span>
+                        </div>
+                        
+                        <div class="limit-progress">
+                            <div class="limit-progress-bar" id="limitProgressBar" style="width: 0%"></div>
+                        </div>
+                        
+                        <div class="limit-warning" id="limitWarning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>များနေပြီ လျှော့သုံး</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn edit-balance-btn" id="editBalanceBtn">
+                            <i class="fas fa-edit"></i> ငွေပြင်မည်
+                        </button>
+                        <button class="action-btn add-expense-btn" id="showAddExpenseBtn">
+                            <i class="fas fa-plus-circle"></i> အသုံးထည့်မည်
+                        </button>
+                    </div>
+                    
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="summary-label">စုစုပေါင်းအသုံး</div>
+                            <div class="summary-value" id="totalExpenses">၀ ကျပ်</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-label">ကျန်ငွေ</div>
+                            <div class="summary-value" id="remainingBalance">၀ ကျပ်</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expenses-section">
+                    <div class="expenses-header">
+                        <h2 class="section-title"><i class="fas fa-money-bill-wave"></i> ယနေ့အသုံးများ</h2>
+                        <div class="expenses-count" id="todayExpensesCount">၀</div>
+                    </div>
+                    
+                    <div class="expenses-list" id="todayExpensesList">
+                        <!-- ဒီနေ့ငွေထွက်များ ဒီမှာ ပြသသွားမည် -->
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <h3>ယနေ့အတွက် အသုံးမရှိသေးပါ</h3>
+                            <p>အသစ်ထည့်ရန် "အသုံးထည့်မည်" ခလုတ်ကိုနှိပ်ပါ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Expenses Tab -->
+            <div id="expenses-tab" class="tab-content">
+                <div class="expenses-section">
+                    <div class="expenses-header">
+                        <h2 class="section-title"><i class="fas fa-history"></i> အားလုံးသော အသုံးများ</h2>
+                        <div class="expenses-count" id="allExpensesCount">၀</div>
+                    </div>
+                    
+                    <div class="expenses-list" id="allExpensesList">
+                        <!-- ငွေထွက်အားလုံး ဒီမှာ ပြသသွားမည် -->
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <h3>အသုံးစရိတ် မရှိသေးပါ</h3>
+                            <p>အသစ်ထည့်ရန် အောက်က "+" ခလုတ်ကိုနှိပ်ပါ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Expense Form (Hidden by default) -->
+            <div id="add-expense-tab" class="tab-content">
+                <div class="add-expense-form">
+                    <h2 class="section-title"><i class="fas fa-plus-circle"></i> အသုံးစရိတ်အသစ်</h2>
+                    
+                    <div class="form-group">
+                        <label for="expenseDescription"><i class="fas fa-file-alt"></i> ဖော်ပြချက်</label>
+                        <input type="text" id="expenseDescription" placeholder="ဥပမာ - ဈေးဝယ်ခြင်း၊ ကားခ စသည်">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expenseAmount"><i class="fas fa-coins"></i> ငွေပမာဏ (ကျပ်)</label>
+                            <input type="number" id="expenseAmount" placeholder="၀">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseTime"><i class="fas fa-clock"></i> အချိန်</label>
+                            <input type="time" id="expenseTime">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expenseDate"><i class="fas fa-calendar-alt"></i> ရက်စွဲ</label>
+                            <input type="date" id="expenseDate">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expenseCategory"><i class="fas fa-tags"></i> အမျိုးအစား</label>
+                            <select id="expenseCategory">
+                                <option value="food">စားသောက်စရိတ်</option>
+                                <option value="transport">ခရီးသွားစရိတ်</option>
+                                <option value="shopping">ဈေးဝယ်စရိတ်</option>
+                                <option value="bills">ပြေစာများ</option>
+                                <option value="entertainment">ဖျော်ဖြေရေး</option>
+                                <option value="other">အခြား</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="submit-expense-btn" id="addExpenseBtn">
+                        <i class="fas fa-save"></i> အသုံးထည့်မည်
+                    </button>
+                    
+                    <button class="action-btn cancel-btn" id="cancelAddExpenseBtn" style="margin-top: 10px; background: #e0e0e0; color: #333;">
+                        <i class="fas fa-times"></i> ပယ်ဖျက်မည်
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>ငွေကြေးစနစ်တကျ သုံးစွဲပြီး စုဆောင်းပါ</p>
+        </footer>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="#" class="nav-item active" data-tab="dashboard-tab">
+                <i class="fas fa-home"></i>
+                <span>မူလ</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="expenses-tab">
+                <i class="fas fa-history"></i>
+                <span>မှတ်တမ်း</span>
+            </a>
+            <a href="#" class="nav-item" data-tab="add-expense-tab" id="add-expense-nav">
+                <i class="fas fa-plus-circle"></i>
+                <span>အသစ်ထည့်</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Edit Balance Modal -->
+    <div class="modal-overlay" id="balanceModal">
+        <div class="modal-content">
+            <h2 class="modal-title"><i class="fas fa-edit"></i> စုစုပေါင်းငွေ ပြင်ဆင်ရန်</h2>
+            
+            <div class="form-group">
+                <label for="newBalance">စုစုပေါင်းငွေ (ကျပ်)</label>
+                <input type="number" id="newBalance" placeholder="၀">
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn cancel-btn" id="cancelEditBtn">မလုပ်တော့ပါ</button>
+                <button class="modal-btn save-btn" id="saveBalanceBtn">သိမ်းဆည်းမည်</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // နေ့စဉ်အသုံးစရိတ် ကန့်သတ်ချက် (၇၀၀၀ ကျပ်)
+        const DAILY_LIMIT = 7000;
+        
+        // စတင်တဲ့အခါမှာ ဒေတာတွေကို localStorage ကနေ ဖတ်မယ်
+        document.addEventListener('DOMContentLoaded', function() {
+            // ဒီနေ့ရဲ့ ရက်စွဲကို ပုံသေထည့်ပေးမယ်
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDate').value = today;
+            
+            // လက်ရှိအချိန်ကို ပုံသေထည့်ပေးမယ်
+            const now = new Date();
+            const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('expenseTime').value = currentTime;
+            
+            // နေ့စဉ်ကန့်သတ်ချက်ကို ပြမယ်
+            document.getElementById('dailyLimitAmount').innerText = formatCurrency(DAILY_LIMIT);
+            
+            // LocalStorage ကနေ ဒေတာတွေ ဖတ်မယ်
+            loadData();
+            
+            // Navigation tab switching
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all nav items
+                    document.querySelectorAll('.nav-item').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked nav item
+                    this.classList.add('active');
+                    
+                    // Hide all tab content
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    // Show selected tab content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Scroll to top when switching tabs
+                    window.scrollTo(0, 0);
+                });
+            });
+            
+            // "အသုံးထည့်မည်" button from dashboard
+            document.getElementById('showAddExpenseBtn').addEventListener('click', function() {
+                // Switch to add expense tab
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                document.getElementById('add-expense-nav').classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById('add-expense-tab').classList.add('active');
+                
+                // Focus on description input
+                setTimeout(() => {
+                    document.getElementById('expenseDescription').focus();
+                }, 300);
+            });
+            
+            // Cancel add expense
+            document.getElementById('cancelAddExpenseBtn').addEventListener('click', function() {
+                // Switch back to dashboard
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                document.querySelector('.nav-item[data-tab="dashboard-tab"]').classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById('dashboard-tab').classList.add('active');
+                
+                // Clear form
+                document.getElementById('expenseDescription').value = '';
+                document.getElementById('expenseAmount').value = '';
+            });
+            
+            // Edit balance button
+            document.getElementById('editBalanceBtn').addEventListener('click', function() {
+                document.getElementById('balanceModal').style.display = 'flex';
+                document.getElementById('newBalance').value = parseFloat(document.getElementById('totalBalance').innerText.replace(/[^0-9.-]+/g, "")) || 0;
+                document.getElementById('newBalance').focus();
+            });
+            
+            // Close edit balance modal
+            document.getElementById('cancelEditBtn').addEventListener('click', function() {
+                document.getElementById('balanceModal').style.display = 'none';
+            });
+            
+            // Save balance
+            document.getElementById('saveBalanceBtn').addEventListener('click', function() {
+                const newBalance = document.getElementById('newBalance').value;
+                if (newBalance && !isNaN(newBalance) && parseFloat(newBalance) >= 0) {
+                    updateTotalBalance(parseFloat(newBalance));
+                    document.getElementById('balanceModal').style.display = 'none';
+                } else {
+                    alert('ကျေးဇူးပြု၍ မှန်ကန်သော ငွေပမာဏကို ရိုက်ထည့်ပါ');
+                }
+            });
+            
+            // Add expense button
+            document.getElementById('addExpenseBtn').addEventListener('click', function() {
+                addExpense();
+            });
+            
+            // Enter key to add expense
+            document.getElementById('expenseDescription').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addExpense();
+                }
+            });
+            
+            document.getElementById('expenseAmount').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addExpense();
+                }
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('balanceModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // Swipe to delete functionality for touch devices
+            initSwipeToDelete();
+        });
+        
+        // Load data from localStorage
+        function loadData() {
+            // Total balance
+            const savedBalance = localStorage.getItem('totalBalance');
+            if (savedBalance) {
+                updateTotalBalance(parseFloat(savedBalance));
+            } else {
+                updateTotalBalance(0);
+            }
+            
+            // Expenses
+            const savedExpenses = localStorage.getItem('expenses');
+            if (savedExpenses) {
+                const expenses = JSON.parse(savedExpenses);
+                updateAllDisplays(expenses);
+            } else {
+                updateAllDisplays([]);
+            }
+        }
+        
+        // Update all displays
+        function updateAllDisplays(expenses) {
+            updateTodayExpenses(expenses);
+            updateAllExpenses(expenses);
+            updateExpensesSummary(expenses);
+            updateDailyLimitInfo(expenses);
+        }
+        
+        // Update total balance
+        function updateTotalBalance(balance) {
+            // UI display
+            document.getElementById('totalBalance').innerText = formatCurrency(balance);
+            
+            // Save to localStorage
+            localStorage.setItem('totalBalance', balance);
+            
+            // Update remaining balance
+            updateRemainingBalance();
+        }
+        
+        // Add new expense
+        function addExpense() {
+            const description = document.getElementById('expenseDescription').value;
+            const amount = document.getElementById('expenseAmount').value;
+            const date = document.getElementById('expenseDate').value;
+            const time = document.getElementById('expenseTime').value;
+            const category = document.getElementById('expenseCategory').value;
+            
+            // Validation
+            if (!description || !amount || !date || !time) {
+                alert('ကျေးဇူးပြု၍ အကုန်လုံးကို ဖြည့်စွက်ပါ');
+                return;
+            }
+            
+            if (isNaN(amount) || parseFloat(amount) <= 0) {
+                alert('ကျေးဇူးပြု၍ မှန်ကန်သော ငွေပမာဏကို ရိုက်ထည့်ပါ');
+                return;
+            }
+            
+            // Check daily limit
+            const expenseAmount = parseFloat(amount);
+            const todayExpenses = getTodayExpensesTotal();
+            
+            if (todayExpenses + expenseAmount > DAILY_LIMIT) {
+                const warning = document.getElementById('limitWarning');
+                warning.classList.add('show');
+                
+                // Auto hide warning after 5 seconds
+                setTimeout(() => {
+                    warning.classList.remove('show');
+                }, 5000);
+                
+                const confirmAdd = confirm(`နေ့စဉ်ကန့်သတ်ချက်ထက် ကျော်လွန်နေပါတယ်!\n\nဒီငွေထွက်ကို ထည့်မှာလား?\n\nများနေပြီ လျှော့သုံးပါ။`);
+                
+                if (!confirmAdd) {
+                    return;
+                }
+            }
+            
+            // Create expense object
+            const expense = {
+                id: Date.now(),
+                description: description,
+                amount: expenseAmount,
+                date: date,
+                time: time,
+                category: category,
+                datetime: new Date(`${date}T${time}`).getTime()
+            };
+            
+            // Save to localStorage
+            let expenses = [];
+            const savedExpenses = localStorage.getItem('expenses');
+            if (savedExpenses) {
+                expenses = JSON.parse(savedExpenses);
+            }
+            
+            expenses.push(expense);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            
+            // Update all displays
+            updateAllDisplays(expenses);
+            
+            // Clear form and switch to dashboard
+            document.getElementById('expenseDescription').value = '';
+            document.getElementById('expenseAmount').value = '';
+            
+            // Switch back to dashboard
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            document.querySelector('.nav-item[data-tab="dashboard-tab"]').classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById('dashboard-tab').classList.add('active');
+            
+            // Show success message
+            showToast('အသုံးစရိတ် ထည့်သွင်းပြီးပါပြီ!');
+        }
+        
+        // Get today's expenses total
+        function getTodayExpensesTotal() {
+            const today = new Date().toISOString().split('T')[0];
+            let total = 0;
+            
+            const savedExpenses = localStorage.getItem('expenses');
+            if (savedExpenses) {
+                const expenses = JSON.parse(savedExpenses);
+                expenses.forEach(expense => {
+                    if (expense.date === today) {
+                        total += expense.amount;
+                    }
+                });
+            }
+            
+            return total;
+        }
+        
+        // Update today's expenses display
+        function updateTodayExpenses(expenses) {
+            const today = new Date().toISOString().split('T')[0];
+            const todayExpenses = expenses.filter(expense => expense.date === today);
+            
+            // Update count
+            document.getElementById('todayExpensesCount').textContent = todayExpenses.length;
+            
+            // Display today's expenses
+            const todayExpensesList = document.getElementById('todayExpensesList');
+            
+            if (todayExpenses.length === 0) {
+                todayExpensesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>ယနေ့အတွက် အသုံးမရှိသေးပါ</h3>
+                        <p>အသစ်ထည့်ရန် "အသုံးထည့်မည်" ခလုတ်ကိုနှိပ်ပါ</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by time (newest first)
+            todayExpenses.sort((a, b) => b.datetime - a.datetime);
+            
+            let html = '';
+            
+            todayExpenses.forEach(expense => {
+                html += createExpenseItemHTML(expense);
+            });
+            
+            todayExpensesList.innerHTML = html;
+        }
+        
+        // Update all expenses display
+        function updateAllExpenses(expenses) {
+            // Update count
+            document.getElementById('allExpensesCount').textContent = expenses.length;
+            
+            // Display all expenses
+            const allExpensesList = document.getElementById('allExpensesList');
+            
+            if (expenses.length === 0) {
+                allExpensesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>အသုံးစရိတ် မရှိသေးပါ</h3>
+                        <p>အသစ်ထည့်ရန် အောက်က "+" ခလုတ်ကိုနှိပ်ပါ</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by date/time (newest first)
+            expenses.sort((a, b) => b.datetime - a.datetime);
+            
+            // Group by date
+            const groupedExpenses = {};
+            expenses.forEach(expense => {
+                if (!groupedExpenses[expense.date]) {
+                    groupedExpenses[expense.date] = [];
+                }
+                groupedExpenses[expense.date].push(expense);
+            });
+            
+            let html = '';
+            
+            // Sort dates in descending order
+            const sortedDates = Object.keys(groupedExpenses).sort((a, b) => new Date(b) - new Date(a));
+            
+            sortedDates.forEach(date => {
+                const dateExpenses = groupedExpenses[date];
+                const formattedDate = formatDate(date);
+                
+                html += `<div style="margin-bottom: 20px;">`;
+                html += `<div style="font-weight: 600; color: #4a6491; margin-bottom: 10px; padding: 0 5px;">${formattedDate}</div>`;
+                
+                dateExpenses.forEach(expense => {
+                    html += createExpenseItemHTML(expense);
+                });
+                
+                html += `</div>`;
+            });
+            
+            allExpensesList.innerHTML = html;
+        }
+        
+        // Create expense item HTML
+        function createExpenseItemHTML(expense) {
+            const categoryNames = {
+                'food': 'စားသောက်',
+                'transport': 'ခရီးသွား',
+                'shopping': 'ဈေးဝယ်',
+                'bills': 'ပြေစာ',
+                'entertainment': 'ဖျော်ဖြေရေး',
+                'other': 'အခြား'
+            };
+            
+            const categoryIcons = {
+                'food': 'fas fa-utensils',
+                'transport': 'fas fa-bus',
+                'shopping': 'fas fa-shopping-cart',
+                'bills': 'fas fa-file-invoice',
+                'entertainment': 'fas fa-film',
+                'other': 'fas fa-ellipsis-h'
+            };
+            
+            return `
+                <div class="expense-item" data-id="${expense.id}">
+                    <button class="delete-expense-btn" onclick="deleteExpense(${expense.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <div class="expense-item-header">
+                        <div class="expense-description">${expense.description}</div>
+                        <div class="expense-amount">${formatCurrency(expense.amount)}</div>
+                    </div>
+                    <div class="expense-details">
+                        <div class="expense-time">
+                            <i class="fas fa-clock"></i> ${expense.time}
+                        </div>
+                        <div class="expense-category">
+                            <i class="${categoryIcons[expense.category]}"></i> ${categoryNames[expense.category]}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Update daily limit info
+        function updateDailyLimitInfo(expenses) {
+            const today = new Date().toISOString().split('T')[0];
+            let dailyTotal = 0;
+            
+            expenses.forEach(expense => {
+                if (expense.date === today) {
+                    dailyTotal += expense.amount;
+                }
+            });
+            
+            // Today's used amount
+            document.getElementById('dailyUsed').innerHTML = formatCurrency(dailyTotal);
+            
+            // Today's remaining amount
+            const dailyRemaining = DAILY_LIMIT - dailyTotal;
+            document.getElementById('dailyRemaining').innerHTML = formatCurrency(dailyRemaining);
+            
+            // Progress bar
+            const percentage = Math.min((dailyTotal / DAILY_LIMIT) * 100, 100);
+            document.getElementById('limitProgressBar').style.width = `${percentage}%`;
+            
+            // Progress bar color
+            const progressBar = document.getElementById('limitProgressBar');
+            if (percentage < 70) {
+                progressBar.style.backgroundColor = '#27ae60'; // Green
+            } else if (percentage < 90) {
+                progressBar.style.backgroundColor = '#f39c12'; // Yellow
+            } else {
+                progressBar.style.backgroundColor = '#e74c3c'; // Red
+                
+                // Show warning if over 90%
+                const warning = document.getElementById('limitWarning');
+                if (percentage >= 90) {
+                    warning.classList.add('show');
+                } else {
+                    warning.classList.remove('show');
+                }
+            }
+            
+            // Remaining amount color
+            const dailyRemainingElement = document.getElementById('dailyRemaining');
+            if (dailyRemaining < 0) {
+                dailyRemainingElement.style.color = '#e74c3c';
+            } else if (dailyRemaining < (DAILY_LIMIT * 0.1)) { // Less than 10%
+                dailyRemainingElement.style.color = '#f39c12';
+            } else {
+                dailyRemainingElement.style.color = '#27ae60';
+            }
+        }
+        
+        // Delete expense
+        function deleteExpense(id) {
+            if (!confirm('ဒီအသုံးစရိတ်ကို ဖျက်မှာသေချာပါသလား?')) {
+                return;
+            }
+            
+            let expenses = [];
+            const savedExpenses = localStorage.getItem('expenses');
+            if (savedExpenses) {
+                expenses = JSON.parse(savedExpenses);
+            }
+            
+            // Remove expense with matching ID
+            expenses = expenses.filter(expense => expense.id !== id);
+            
+            // Save to localStorage
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            
+            // Update all displays
+            updateAllDisplays(expenses);
+            
+            // Show success message
+            showToast('အသုံးစရိတ် ဖျက်ပြီးပါပြီ!');
+        }
+        
+        // Update expenses summary
+        function updateExpensesSummary(expenses) {
+            // Total expenses
+            const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            document.getElementById('totalExpenses').innerText = formatCurrency(totalExpenses);
+            
+            // Update remaining balance
+            updateRemainingBalance();
+        }
+        
+        // Update remaining balance
+        function updateRemainingBalance() {
+            const totalBalance = parseFloat(localStorage.getItem('totalBalance')) || 0;
+            
+            let totalExpenses = 0;
+            const savedExpenses = localStorage.getItem('expenses');
+            if (savedExpenses) {
+                const expenses = JSON.parse(savedExpenses);
+                totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            }
+            
+            const remainingBalance = totalBalance - totalExpenses;
+            document.getElementById('remainingBalance').innerText = formatCurrency(remainingBalance);
+            
+            // Color code remaining balance
+            const remainingBalanceElement = document.getElementById('remainingBalance');
+            if (remainingBalance < 0) {
+                remainingBalanceElement.style.color = '#e74c3c';
+            } else {
+                remainingBalanceElement.style.color = '#27ae60';
+            }
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return amount.toLocaleString('my-MM', { 
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0 
+            }) + ' ကျပ်';
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('my-MM', options);
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 10px;
+                z-index: 1000;
+                font-weight: 500;
+                transition: opacity 0.3s;
+                opacity: 0;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Fade in
+            setTimeout(() => {
+                toast.style.opacity = '1';
+            }, 10);
+            
+            // Fade out and remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Initialize swipe to delete functionality
+        function initSwipeToDelete() {
+            let startX, startY;
+            let currentExpenseItem = null;
+            
+            document.addEventListener('touchstart', function(e) {
+                const expenseItem = e.target.closest('.expense-item');
+                if (expenseItem) {
+                    currentExpenseItem = expenseItem;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                }
+            });
+            
+            document.addEventListener('touchmove', function(e) {
+                if (!currentExpenseItem) return;
+                
+                const x = e.touches[0].clientX;
+                const y = e.touches[0].clientY;
+                
+                // Check if it's mostly horizontal swipe
+                if (Math.abs(x - startX) > Math.abs(y - startY)) {
+                    e.preventDefault(); // Prevent vertical scroll during horizontal swipe
+                    
+                    const diff = startX - x;
+                    if (diff > 0) { // Swipe left
+                        currentExpenseItem.style.transform = `translateX(-${Math.min(diff, 100)}px)`;
+                    }
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (!currentExpenseItem) return;
+                
+                const x = e.changedTouches[0].clientX;
+                const diff = startX - x;
+                
+                // If swiped more than 50px left, show delete confirmation
+                if (diff > 50) {
+                    const expenseId = parseInt(currentExpenseItem.getAttribute('data-id'));
+                    if (confirm('ဖျက်မှာသေချာပါသလား?')) {
+                        currentExpenseItem.classList.add('swipe-delete');
+                        setTimeout(() => {
+                            deleteExpense(expenseId);
+                        }, 300);
+                    } else {
+                        currentExpenseItem.style.transform = 'translateX(0)';
+                    }
+                } else {
+                    // Reset position
+                    currentExpenseItem.style.transform = 'translateX(0)';
+                }
+                
+                currentExpenseItem = null;
+            });
+        }
+    </script>
+</body>
+</html>
